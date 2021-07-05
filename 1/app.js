@@ -7,20 +7,27 @@ function displayData(obj) {
   }
 }
 
-let numberPromise = axios.get(`http://numbersapi.com/52..62?json`);
+async function NumberAsync() {
+  try {
+    const res = await axios.get(`http://numbersapi.com/52..62?json`);
+    return displayData(res.data);
+  } catch (error) {
+    console.log(error)
+  }
+};
 
-numberPromise
-  .then((data) => displayData(data.data))
-  .catch((err) => console.log(err));
+NumberAsync()
 
-favNumFacts = [];
+async function multipleNumFacts() {
+  numFactsArr = await Promise.all([
+    axios.get(`http://numbersapi.com/42?json`),
+    axios.get(`http://numbersapi.com/42?json`),
+    axios.get(`http://numbersapi.com/42?json`),
+    axios.get(`http://numbersapi.com/42?json`),
+  ])
 
-for (let i = 0; i < 4; i++) {
-  favNumFacts.push(axios.get(`http://numbersapi.com/42?json`));
+  return numFactsArr.forEach((fact) => $("body").append(`<p>${fact.data.text}</p>`))
+
 }
 
-Promise.all(favNumFacts)
-  .then((numFactsArr) =>
-    numFactsArr.forEach((fact) => $("body").append(`<p>${fact.data.text}</p>`))
-  )
-  .catch((err) => console.log(err));
+multipleNumFacts()
